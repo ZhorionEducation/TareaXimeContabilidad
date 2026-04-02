@@ -174,21 +174,32 @@ body {
 
 .input-wrapper {
     position: relative;
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(100, 102, 241, 0.1);
+    border-radius: 8px;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
 }
 
 .input-wrapper i {
-    position: absolute;
-    left: 15px;
     color: var(--primary-color);
     font-size: 16px;
-    z-index: 2;
     transition: all 0.3s ease;
 }
 
 .input-wrapper input {
-    width: 100%;
-    padding: 15px 15px 15px 45px;
+    flex: 1;
+    padding: 15px;
     background: rgba(100, 102, 241, 0.05);
     border: 1.5px solid rgba(100, 102, 241, 0.2);
     border-radius: 12px;
@@ -204,13 +215,17 @@ body {
     box-shadow: 0 0 20px rgba(100, 102, 241, 0.3);
 }
 
-.input-wrapper input::placeholder {
-    color: var(--text-secondary);
+.input-wrapper input:focus ~ .input-icon {
+    background: rgba(100, 102, 241, 0.2);
 }
 
-.input-wrapper input:focus + i {
+.input-wrapper input:focus ~ .input-icon i {
     color: var(--accent-color);
     transform: scale(1.2);
+}
+
+.input-wrapper input::placeholder {
+    color: var(--text-secondary);
 }
 
 .input-wrapper input.input-error {
