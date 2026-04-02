@@ -202,7 +202,6 @@ function loadEmployees() {
         const statusClass = employee.estado === 'pendiente' ? 'status-pending' : 'status-paid';
         const statusIcon = employee.estado === 'pendiente' ? 'fa-hourglass-half' : 'fa-check-circle';
         const statusText = employee.estado === 'pendiente' ? 'Pendiente' : 'Pagado';
-        const payButtonVisible = employee.estado === 'pendiente' ? 'block' : 'none';
         
         row.innerHTML = `
             <td>${employee.cedula}</td>
@@ -223,9 +222,14 @@ function loadEmployees() {
                     <button class="edit-btn" onclick="openEditEmployeeModal(${employee.id})">
                         <i class="fas fa-edit"></i> Editar
                     </button>
-                    <button class="pay-btn" id="payBtn-${employee.id}" onclick="markAsPaid(${employee.id})" style="display: ${payButtonVisible};">
-                        <i class="fas fa-credit-card"></i> Pagar
-                    </button>
+                    <select class="status-select" onchange="changeEmployeeStatus(${employee.id}, this.value)">
+                        <option value="pendiente" ${employee.estado === 'pendiente' ? 'selected' : ''}>
+                            Pendiente
+                        </option>
+                        <option value="pagado" ${employee.estado === 'pagado' ? 'selected' : ''}>
+                            Pagado
+                        </option>
+                    </select>
                     <button class="delete-btn" onclick="deleteEmployee(${employee.id})">
                         <i class="fas fa-trash"></i> Eliminar
                     </button>
@@ -297,6 +301,29 @@ function showEmployeeDetails(employeeId) {
     `;
 
     document.getElementById('employeeModal').classList.add('show');
+}
+
+function changeEmployeeStatus(employeeId, newStatus) {
+    const employee = employees.find(e => e.id === employeeId);
+    if (!employee) return;
+
+    const oldStatus = employee.estado;
+    employee.estado = newStatus;
+
+    // Guardar en localStorage
+    saveEmployees();
+
+    // Actualizar tabla
+    loadEmployees();
+
+    // Actualizar dashboard
+    loadDashboard();
+
+    // Mostrar notificación
+    const message = newStatus === 'pagado' 
+        ? `Pago registrado para ${employee.nombre}` 
+        : `Estado actualizado para ${employee.nombre}`;
+    showNotification(message, 'success');
 }
 
 function markAsPaid(employeeId) {
@@ -493,14 +520,33 @@ function showAddEmployeeNotification(employeeName) {
 // ==================== ELIMINAR EMPLEADO ====================
 
 function deleteEmployee(employeeId) {
-    if (confirm('¿Estás seguro de que deseas eliminar este empleado?')) {
-        employees = employees.filter(e => e.id !== employeeId);
-        saveEmployees();
-        loadEmployees();
-        loadEmployeeSelector();
-        loadDashboard();
-        showNotification('Empleado eliminado exitosamente', 'success');
-    }
+    const employee = employees.find(e => e.id === employeeId);
+    if (!employee) return;
+
+    Swal.fire({
+        title: '¿Eliminar empleado?',
+        text: `¿Estás seguro de que deseas eliminar a ${employee.nombre}? Esta acción no se puede deshacer.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+            popup: 'swal-popup',
+            confirmButton: 'swal-confirm-btn',
+            cancelButton: 'swal-cancel-btn'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            employees = employees.filter(e => e.id !== employeeId);
+            saveEmployees();
+            loadEmployees();
+            loadEmployeeSelector();
+            loadDashboard();
+            showNotification('Empleado eliminado exitosamente', 'success');
+        }
+    });
 }
 
 // ==================== EDITAR EMPLEADO ====================

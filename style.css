@@ -825,6 +825,36 @@ body {
     transform: translateY(0);
 }
 
+.status-select {
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.status-select:hover {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+}
+
+.status-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2), 0 5px 15px rgba(139, 92, 246, 0.3);
+}
+
+.status-select option {
+    background: var(--dark-bg);
+    color: var(--text-primary);
+}
+
 /* ==================== CALCULATOR ==================== */
 
 .calculator-container {
@@ -1212,6 +1242,57 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #ec4899, #6366f1);
+}
+
+/* ==================== SWEETALERT CUSTOMIZATION ==================== */
+
+.swal-popup {
+    background: rgba(30, 41, 59, 0.95) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    backdrop-filter: blur(20px) !important;
+}
+
+.swal-popup .swal2-html-container {
+    color: var(--text-secondary) !important;
+    font-size: 14px !important;
+}
+
+.swal-popup .swal2-title {
+    color: var(--text-primary) !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+}
+
+.swal-popup .swal2-icon {
+    border-color: #f59e0b !important;
+}
+
+.swal-popup .swal2-icon.swal2-warning {
+    color: #f59e0b !important;
+}
+
+.swal-confirm-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3) !important;
+    font-weight: 600 !important;
+    color: white !important;
+}
+
+.swal-confirm-btn:hover {
+    background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.5) !important;
+}
+
+.swal-cancel-btn {
+    background: rgba(100, 102, 241, 0.1) !important;
+    border: 1px solid rgba(100, 102, 241, 0.3) !important;
+    color: var(--text-secondary) !important;
+    font-weight: 600 !important;
+}
+
+.swal-cancel-btn:hover {
+    background: rgba(100, 102, 241, 0.2) !important;
+    border-color: rgba(100, 102, 241, 0.5) !important;
 }
 
 /* ==================== RESPONSIVE ==================== */
