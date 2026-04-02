@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Nóminas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <i class="fas fa-calculator"></i>
+                <span>NÓMINAS</span>
+            </div>
+            <div class="navbar-menu">
+                <span class="user-welcome">Bienvenido, <strong id="userName"></strong></span>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="menu-items">
+                <div class="menu-item active" data-tab="dashboard">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item" data-tab="employees">
+                    <i class="fas fa-users"></i>
+                    <span>Empleados</span>
+                </div>
+                <div class="menu-item" data-tab="calculator">
+                    <i class="fas fa-calculator"></i>
+                    <span>Calculadora</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content -->
+        <main class="content">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard">
+                <div class="page-header">
+                    <h2><i class="fas fa-chart-pie"></i> Dashboard</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <p class="stat-label">Total de Empleados</p>
+                            <p class="stat-value" id="totalEmployees">0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-info">
+                            <p class="stat-label">Nómina Total Mensual</p>
+                            <p class="stat-value" id="totalPayroll">$0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <div class="stat-info">
+                            <p class="stat-label">Descuentos Totales</p>
+                            <p class="stat-value" id="totalDiscounts">$0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="stat-info">
+                            <p class="stat-label">Neto a Pagar</p>
+                            <p class="stat-value" id="totalNet">$0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employees Tab -->
+            <div class="tab-content" id="employees">
+                <div class="page-header">
+                    <h2><i class="fas fa-users"></i> Empleados</h2>
+                    <div class="header-actions">
+                        <button class="add-employee-btn" id="addEmployeeBtn">
+                            <i class="fas fa-plus"></i>
+                            Agregar Empleado
+                        </button>
+                        <button class="export-btn" id="exportBtn">
+                            <i class="fas fa-download"></i>
+                            Exportar a Excel
+                        </button>
+                    </div>
+                </div>
+
+                <div class="employees-table-container">
+                    <table class="employees-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-id-badge"></i> Cédula</th>
+                                <th><i class="fas fa-user"></i> Nombre</th>
+                                <th><i class="fas fa-briefcase"></i> Puesto</th>
+                                <th><i class="fas fa-money-bill"></i> Salario Base</th>
+                                <th><i class="fas fa-clock"></i> Estado</th>
+                                <th><i class="fas fa-cog"></i> Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeesList">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Calculator Tab -->
+            <div class="tab-content" id="calculator">
+                <div class="page-header">
+                    <h2><i class="fas fa-calculator"></i> Calculadora de Nómina</h2>
+                </div>
+
+                <div class="calculator-container">
+                    <div class="calculator-selector">
+                        <label for="employeeSelect">Seleccionar Empleado:</label>
+                        <select id="employeeSelect">
+                            <option value="">-- Seleccione un empleado --</option>
+                        </select>
+                    </div>
+
+                    <div class="calculator-result">
+                        <div class="result-group">
+                            <div class="result-card">
+                                <label>Salario Base</label>
+                                <p class="result-value" id="calcBaseSalary">$0</p>
+                            </div>
+                            <div class="result-card">
+                                <label>Seguro Social (10.5%)</label>
+                                <p class="result-value" id="calcSocialSecurity">$0</p>
+                            </div>
+                            <div class="result-card">
+                                <label>Impuesto Renta (8%)</label>
+                                <p class="result-value" id="calcIncomeTax">$0</p>
+                            </div>
+                            <div class="result-card">
+                                <label>Otros Descuentos (2%)</label>
+                                <p class="result-value" id="calcOtherDeductions">$0</p>
+                            </div>
+                        </div>
+
+                        <div class="result-summary">
+                            <div class="summary-item total-deductions">
+                                <label>Total Descuentos</label>
+                                <p class="summary-value" id="calcTotalDeductions">$0</p>
+                            </div>
+                            <div class="summary-item net-salary">
+                                <label>Salario Neto</label>
+                                <p class="summary-value" id="calcNetSalary">$0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="calculator-actions">
+                        <button class="export-receipt-btn" id="exportReceiptBtn">
+                            <i class="fas fa-file-pdf"></i>
+                            Exportar Recibo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para detalles del empleado -->
+    <div class="modal" id="employeeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Detalles del Empleado</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar empleado -->
+    <div class="modal" id="addEmployeeModal">
+        <div class="modal-content modal-form">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Agregar Nuevo Empleado</h3>
+                <button class="modal-close" id="closeAddEmployeeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addEmployeeForm">
+                    <div class="form-group">
+                        <label for="newCedula">Cédula</label>
+                        <input type="text" id="newCedula" placeholder="Ej: 1001234567" required>
+                        <span class="error-message" id="cedulaError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newNombre">Nombre Completo</label>
+                        <input type="text" id="newNombre" placeholder="Ej: Juan Pérez" required>
+                        <span class="error-message" id="nombreError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPuesto">Puesto</label>
+                        <input type="text" id="newPuesto" placeholder="Ej: Desarrollador" required>
+                        <span class="error-message" id="puestoError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newSalario">Salario Base (COP)</label>
+                        <input type="number" id="newSalario" placeholder="Ej: 3500000" min="0" required>
+                        <span class="error-message" id="salarioError"></span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="cancelAddEmployee">Cancelar</button>
+                        <button type="submit" class="btn-submit">Agregar Empleado</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar empleado -->
+    <div class="modal" id="editEmployeeModal">
+        <div class="modal-content modal-form">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> Editar Empleado</h3>
+                <button class="modal-close" id="closeEditEmployeeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editEmployeeForm">
+                    <input type="hidden" id="editEmployeeId">
+
+                    <div class="form-group">
+                        <label for="editCedula">Cédula</label>
+                        <input type="text" id="editCedula" placeholder="Ej: 1001234567" required>
+                        <span class="error-message" id="editCedulaError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editNombre">Nombre Completo</label>
+                        <input type="text" id="editNombre" placeholder="Ej: Juan Pérez" required>
+                        <span class="error-message" id="editNombreError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editPuesto">Puesto</label>
+                        <input type="text" id="editPuesto" placeholder="Ej: Desarrollador" required>
+                        <span class="error-message" id="editPuestoError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editSalario">Salario Base (COP)</label>
+                        <input type="number" id="editSalario" placeholder="Ej: 3500000" min="0" required>
+                        <span class="error-message" id="editSalarioError"></span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="cancelEditEmployee">Cancelar</button>
+                        <button type="submit" class="btn-submit">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
