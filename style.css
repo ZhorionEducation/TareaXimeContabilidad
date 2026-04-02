@@ -174,8 +174,7 @@ body {
 
 .input-wrapper {
     position: relative;
-    display: flex;
-    align-items: center;
+    display: block;
 }
 
 .input-wrapper i {
