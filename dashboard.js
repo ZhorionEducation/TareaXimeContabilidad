@@ -204,17 +204,17 @@ function loadEmployees() {
         const statusText = employee.estado === 'pendiente' ? 'Pendiente' : 'Pagado';
         
         row.innerHTML = `
-            <td>${employee.cedula}</td>
-            <td class="employee-name">${employee.nombre}</td>
-            <td>${employee.puesto}</td>
-            <td class="employee-salary">${formatCurrency(employee.salario)}</td>
-            <td>
+            <td data-label="Cédula">${employee.cedula}</td>
+            <td data-label="Nombre" class="employee-name">${employee.nombre}</td>
+            <td data-label="Puesto">${employee.puesto}</td>
+            <td data-label="Salario Base" class="employee-salary">${formatCurrency(employee.salario)}</td>
+            <td data-label="Estado">
                 <span class="status-badge ${statusClass}">
                     <i class="fas ${statusIcon}"></i>
                     ${statusText}
                 </span>
             </td>
-            <td>
+            <td data-label="Acciones">
                 <div class="action-buttons">
                     <button class="details-btn" onclick="showEmployeeDetails(${employee.id})">
                         <i class="fas fa-eye"></i> Ver

@@ -1295,6 +1295,108 @@ body {
     border-color: rgba(100, 102, 241, 0.5) !important;
 }
 
+/* ==================== EMPLOYEES TABLE RESPONSIVE ==================== */
+
+/* Solo se aplica en tablets pequeñas y móviles */
+@media (max-width: 1024px) {
+    .employees-table-container {
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .employees-table-container {
+        overflow: visible;
+    }
+
+    .employees-table {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .employees-table thead {
+        display: none;
+    }
+
+    .employees-table tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .employees-table tr {
+        display: grid;
+        grid-template-columns: 1fr;
+        background: rgba(100, 102, 241, 0.05);
+        border: 1px solid rgba(100, 102, 241, 0.2);
+        border-radius: 12px;
+        padding: 15px;
+        gap: 12px;
+    }
+
+    .employees-table td {
+        padding: 8px 0;
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        align-items: center;
+        gap: 10px;
+        border: none;
+    }
+
+    .employees-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--primary-color);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .employees-table .employee-name {
+        grid-column: 1 / -1;
+    }
+
+    .employees-table .employee-name::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .employees-table .status-badge {
+        width: fit-content;
+    }
+
+    .employees-table .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        grid-column: 1 / -1;
+    }
+
+    .details-btn,
+    .edit-btn,
+    .delete-btn,
+    .status-select {
+        padding: 10px 12px !important;
+        font-size: 11px !important;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .details-btn i,
+    .edit-btn i,
+    .delete-btn i {
+        margin-right: 0;
+    }
+
+    .details-btn span::after,
+    .edit-btn span::after,
+    .delete-btn span::after {
+        display: none;
+    }
+}
+
 /* ==================== RESPONSIVE ==================== */
 
 @media (max-width: 768px) {
@@ -1344,15 +1446,6 @@ body {
         flex-direction: column;
         gap: 15px;
         align-items: flex-start;
-    }
-
-    .employees-table {
-        font-size: 12px;
-    }
-
-    .employees-table th,
-    .employees-table td {
-        padding: 12px;
     }
 
     .navbar-menu {
