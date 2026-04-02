@@ -1,6 +1,6 @@
 // Credenciales de acceso
 const CREDENTIALS = {
-    username: 'ximena',
+    username: 'admin',
     password: '123'
 };
 
