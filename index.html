@@ -13,7 +13,10 @@
         <div class="navbar-container">
             <div class="navbar-brand">
                 <i class="fas fa-calculator"></i>
-                <span>NÓMINAS</span>
+                <span>NÓMINAS DE LUXE INTERIEUR</span>
+            </div>
+            <div class="img">
+                <img src="./Logo.png" alt="">
             </div>
             <div class="navbar-menu">
                 <span class="user-welcome">Bienvenido, <strong id="userName"></strong></span>
@@ -144,23 +147,109 @@
                         </select>
                     </div>
 
+                    <!-- Sección de Días Trabajados -->
+                    <div class="payroll-period-config">
+                        <h3><i class="fas fa-calendar-days"></i> Días Trabajados del Empleado</h3>
+                        <div class="period-grid">
+                            <div class="period-input-group">
+                                <label for="daysWorked">Días Trabajados</label>
+                                <div class="input-with-days">
+                                    <input type="number" id="daysWorked" class="days-input" step="0.1" min="0.1" max="30" value="30">
+                                    <span class="days-symbol">días</span>
+                                </div>
+                                <small class="input-hint">Ingresa los días trabajados en el mes (ej: 5, 10, 15.5, etc.)</small>
+                            </div>
+                        </div>
+                        <div class="period-info">
+                            <p><i class="fas fa-info-circle"></i> <span id="periodInfo">Salario mensual completo</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Porcentajes Personalizados -->
+                    <div class="deductions-config">
+                        <h3><i class="fas fa-sliders-h"></i> Configurar Descuentos (%)</h3>
+                        <div class="deductions-grid">
+                            <div class="deduction-input-group">
+                                <label for="deductionHealth">Salud Empleado</label>
+                                <div class="input-with-percent">
+                                    <input type="number" id="deductionHealth" class="percent-input" step="0.1" min="0" max="100" value="8">
+                                    <span class="percent-symbol">%</span>
+                                </div>
+                            </div>
+                            <div class="deduction-input-group">
+                                <label for="deductionPension">Pensión</label>
+                                <div class="input-with-percent">
+                                    <input type="number" id="deductionPension" class="percent-input" step="0.1" min="0" max="100" value="12">
+                                    <span class="percent-symbol">%</span>
+                                </div>
+                            </div>
+                            <div class="deduction-input-group">
+                                <label for="deductionLabor">Riesgos Laborales</label>
+                                <div class="input-with-percent">
+                                    <input type="number" id="deductionLabor" class="percent-input" step="0.1" min="0" max="100" value="0.522">
+                                    <span class="percent-symbol">%</span>
+                                </div>
+                            </div>
+                            <div class="deduction-input-group">
+                                <label for="deductionCompensation">Caja de Compensación</label>
+                                <div class="input-with-percent">
+                                    <input type="number" id="deductionCompensation" class="percent-input" step="0.1" min="0" max="100" value="4">
+                                    <span class="percent-symbol">%</span>
+                                </div>
+                            </div>
+                            <div class="deduction-input-group">
+                                <label for="deductionSena">SENA</label>
+                                <div class="input-with-percent">
+                                    <input type="number" id="deductionSena" class="percent-input" step="0.1" min="0" max="100" value="0.8">
+                                    <span class="percent-symbol">%</span>
+                                </div>
+                            </div>
+                            <div class="deduction-input-group">
+                                <label for="deductionICBF">ICBF</label>
+                                <div class="input-with-percent">
+                                    <input type="number" id="deductionICBF" class="percent-input" step="0.1" min="0" max="100" value="3">
+                                    <span class="percent-symbol">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="reset-deductions-btn" id="resetDeductionsBtn">
+                            <i class="fas fa-redo"></i> Restablecer Valores
+                        </button>
+                    </div>
+
                     <div class="calculator-result">
                         <div class="result-group">
                             <div class="result-card">
-                                <label>Salario Base</label>
+                                <label>Salario Mensual</label>
                                 <p class="result-value" id="calcBaseSalary">$0</p>
                             </div>
-                            <div class="result-card">
-                                <label>Seguro Social (10.5%)</label>
-                                <p class="result-value" id="calcSocialSecurity">$0</p>
+                            <div class="result-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(6, 182, 212, 0.1)); border: 1.5px solid rgba(99, 102, 241, 0.3);">
+                                <label>Salario Prorrateo</label>
+                                <p class="result-value" id="calcProrateSalary">$0</p>
                             </div>
                             <div class="result-card">
-                                <label>Impuesto Renta (8%)</label>
-                                <p class="result-value" id="calcIncomeTax">$0</p>
+                                <label>Salud Empleado</label>
+                                <p class="result-value" id="calcHealth">$0</p>
                             </div>
                             <div class="result-card">
-                                <label>Otros Descuentos (2%)</label>
-                                <p class="result-value" id="calcOtherDeductions">$0</p>
+                                <label>Pensión</label>
+                                <p class="result-value" id="calcPension">$0</p>
+                            </div>
+                            <div class="result-card">
+                                <label>Riesgos Laborales</label>
+                                <p class="result-value" id="calcLabor">$0</p>
+                            </div>
+                            <div class="result-card">
+                                <label>Caja de Compensación</label>
+                                <p class="result-value" id="calcCompensation">$0</p>
+                            </div>
+                            <div class="result-card">
+                                <label>SENA</label>
+                                <p class="result-value" id="calcSena">$0</p>
+                            </div>
+                            <div class="result-card">
+                                <label>ICBF</label>
+                                <p class="result-value" id="calcICBF">$0</p>
                             </div>
                         </div>
 

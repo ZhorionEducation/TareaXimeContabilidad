@@ -73,11 +73,17 @@ function saveEmployees() {
 
 // ==================== DESCUENTOS ====================
 
-const DEDUCTIONS = {
-    socialSecurity: 0.105,    // 10.5%
-    incomeTax: 0.08,          // 8%
-    otherDeductions: 0.02     // 2%
+const DEFAULT_DEDUCTIONS = {
+    health: 0.08,              // 8%
+    pension: 0.12,             // 12%
+    labor: 0.00522,            // 0.522%
+    compensation: 0.04,        // 4%
+    sena: 0.008,               // 0.8%
+    icbf: 0.03                 // 3%
 };
+
+// Variable para almacenar descuentos personalizados
+let currentDeductions = JSON.parse(JSON.stringify(DEFAULT_DEDUCTIONS));
 
 // ==================== VERIFICACIÓN DE SESIÓN ====================
 
@@ -91,6 +97,9 @@ window.addEventListener('load', () => {
     // Mostrar nombre del usuario
     document.getElementById('userName').textContent = user.username;
 
+    // Cargar descuentos guardados en localStorage
+    loadDeductionsFromStorage();
+
     // Inicializar empleados desde localStorage
     initializeEmployees();
 
@@ -99,6 +108,21 @@ window.addEventListener('load', () => {
 });
 
 // ==================== INICIALIZACIÓN ====================
+
+function loadDeductionsFromStorage() {
+    const stored = localStorage.getItem('customDeductions');
+    if (stored) {
+        try {
+            currentDeductions = JSON.parse(stored);
+        } catch (e) {
+            currentDeductions = JSON.parse(JSON.stringify(DEFAULT_DEDUCTIONS));
+        }
+    }
+}
+
+function saveDeductionsToStorage() {
+    localStorage.setItem('customDeductions', JSON.stringify(currentDeductions));
+}
 
 function initApp() {
     // Cargar datos en el dashboard
@@ -123,6 +147,10 @@ function initApp() {
 
     // Event listener para seleccionar empleado en calculadora
     document.getElementById('employeeSelect').addEventListener('change', calculateDeductions);
+
+    // Event listeners para días trabajados
+    document.getElementById('daysWorked').addEventListener('change', calculateDeductions);
+    document.getElementById('daysWorked').addEventListener('input', calculateDeductions);
 
     // Event listener para exportar recibo del empleado
     document.getElementById('exportReceiptBtn').addEventListener('click', exportReceipt);
@@ -155,6 +183,25 @@ function initApp() {
             closeEditEmployeeModal();
         }
     });
+
+    // Event listeners para los campos de porcentaje personalizado
+    document.getElementById('deductionHealth').addEventListener('change', updateCustomDeductions);
+    document.getElementById('deductionPension').addEventListener('change', updateCustomDeductions);
+    document.getElementById('deductionLabor').addEventListener('change', updateCustomDeductions);
+    document.getElementById('deductionCompensation').addEventListener('change', updateCustomDeductions);
+    document.getElementById('deductionSena').addEventListener('change', updateCustomDeductions);
+    document.getElementById('deductionICBF').addEventListener('change', updateCustomDeductions);
+    
+    // Event listener para restablecer descuentos
+    document.getElementById('resetDeductionsBtn').addEventListener('click', resetDeductions);
+
+    // Cargar valores de descuentos en los inputs
+    document.getElementById('deductionHealth').value = (currentDeductions.health * 100).toFixed(2);
+    document.getElementById('deductionPension').value = (currentDeductions.pension * 100).toFixed(2);
+    document.getElementById('deductionLabor').value = (currentDeductions.labor * 100).toFixed(3);
+    document.getElementById('deductionCompensation').value = (currentDeductions.compensation * 100).toFixed(2);
+    document.getElementById('deductionSena').value = (currentDeductions.sena * 100).toFixed(2);
+    document.getElementById('deductionICBF').value = (currentDeductions.icbf * 100).toFixed(2);
 }
 
 // ==================== DASHBOARD ====================
@@ -279,16 +326,28 @@ function showEmployeeDetails(employeeId) {
             <span class="modal-value" style="color: #86efac;">${formatCurrency(employee.salario)}</span>
         </div>
         <div class="modal-row">
-            <span class="modal-label">Seguro Social (10.5%)</span>
-            <span class="modal-value">${formatCurrency(breakdown.socialSecurity)}</span>
+            <span class="modal-label">Salud Empleado (${(currentDeductions.health * 100).toFixed(2)}%)</span>
+            <span class="modal-value">${formatCurrency(breakdown.health)}</span>
         </div>
         <div class="modal-row">
-            <span class="modal-label">Impuesto Renta (8%)</span>
-            <span class="modal-value">${formatCurrency(breakdown.incomeTax)}</span>
+            <span class="modal-label">Pensión (${(currentDeductions.pension * 100).toFixed(2)}%)</span>
+            <span class="modal-value">${formatCurrency(breakdown.pension)}</span>
         </div>
         <div class="modal-row">
-            <span class="modal-label">Otros Descuentos (2%)</span>
-            <span class="modal-value">${formatCurrency(breakdown.otherDeductions)}</span>
+            <span class="modal-label">Riesgos Laborales (${(currentDeductions.labor * 100).toFixed(3)}%)</span>
+            <span class="modal-value">${formatCurrency(breakdown.labor)}</span>
+        </div>
+        <div class="modal-row">
+            <span class="modal-label">Caja de Compensación (${(currentDeductions.compensation * 100).toFixed(2)}%)</span>
+            <span class="modal-value">${formatCurrency(breakdown.compensation)}</span>
+        </div>
+        <div class="modal-row">
+            <span class="modal-label">SENA (${(currentDeductions.sena * 100).toFixed(2)}%)</span>
+            <span class="modal-value">${formatCurrency(breakdown.sena)}</span>
+        </div>
+        <div class="modal-row">
+            <span class="modal-label">ICBF (${(currentDeductions.icbf * 100).toFixed(2)}%)</span>
+            <span class="modal-value">${formatCurrency(breakdown.icbf)}</span>
         </div>
         <div class="modal-row">
             <span class="modal-label" style="color: #fca5a5;">Total Descuentos</span>
@@ -706,15 +765,32 @@ function loadEmployeeSelector() {
     });
 }
 
+function updatePeriodInfo() {
+    const daysWorked = parseFloat(document.getElementById('daysWorked').value) || 0;
+    const periodText = `Días trabajados: ${daysWorked} de 30 días`;
+    document.getElementById('periodInfo').textContent = periodText;
+}
+
+function getProrateSalary(baseSalary, daysWorked) {
+    // El salario es mensual (30 días)
+    const monthlyDays = 30;
+    const dailyRate = baseSalary / monthlyDays;
+    return Math.round(dailyRate * daysWorked);
+}
+
 function calculateDeductions() {
     const employeeId = parseInt(document.getElementById('employeeSelect').value);
     
     if (!employeeId) {
         // Limpiar calculadora si no hay empleado seleccionado
         document.getElementById('calcBaseSalary').textContent = '$0';
-        document.getElementById('calcSocialSecurity').textContent = '$0';
-        document.getElementById('calcIncomeTax').textContent = '$0';
-        document.getElementById('calcOtherDeductions').textContent = '$0';
+        document.getElementById('calcProrateSalary').textContent = '$0';
+        document.getElementById('calcHealth').textContent = '$0';
+        document.getElementById('calcPension').textContent = '$0';
+        document.getElementById('calcLabor').textContent = '$0';
+        document.getElementById('calcCompensation').textContent = '$0';
+        document.getElementById('calcSena').textContent = '$0';
+        document.getElementById('calcICBF').textContent = '$0';
         document.getElementById('calcTotalDeductions').textContent = '$0';
         document.getElementById('calcNetSalary').textContent = '$0';
         return;
@@ -723,15 +799,39 @@ function calculateDeductions() {
     const employee = employees.find(e => e.id === employeeId);
     if (!employee) return;
 
-    const breakdown = calculateDeductionsBreakdown(employee.salario);
-    const totalDeductions = calculateDeductionsAmount(employee.salario);
-    const netSalary = employee.salario - totalDeductions;
+    // Actualizar información del período
+    updatePeriodInfo();
+
+    // Obtener días trabajados
+    let daysWorked = parseFloat(document.getElementById('daysWorked').value) || 30;
+    
+    // Validar días trabajados
+    if (daysWorked > 30) {
+        daysWorked = 30;
+        document.getElementById('daysWorked').value = 30;
+    }
+    if (daysWorked < 0) {
+        daysWorked = 0;
+        document.getElementById('daysWorked').value = 0;
+    }
+
+    // Calcular salario prorratado (basado en salario mensual de 30 días)
+    const proratedSalary = getProrateSalary(employee.salario, daysWorked);
+
+    // Calcular descuentos basados en salario prorratado
+    const breakdown = calculateDeductionsBreakdown(proratedSalary);
+    const totalDeductions = calculateDeductionsAmount(proratedSalary);
+    const netSalary = proratedSalary - totalDeductions;
 
     // Actualizar valores con animación
     animateValue('calcBaseSalary', employee.salario);
-    animateValue('calcSocialSecurity', breakdown.socialSecurity);
-    animateValue('calcIncomeTax', breakdown.incomeTax);
-    animateValue('calcOtherDeductions', breakdown.otherDeductions);
+    animateValue('calcProrateSalary', proratedSalary);
+    animateValue('calcHealth', breakdown.health);
+    animateValue('calcPension', breakdown.pension);
+    animateValue('calcLabor', breakdown.labor);
+    animateValue('calcCompensation', breakdown.compensation);
+    animateValue('calcSena', breakdown.sena);
+    animateValue('calcICBF', breakdown.icbf);
     animateValue('calcTotalDeductions', totalDeductions);
     animateValue('calcNetSalary', netSalary);
 }
@@ -761,15 +861,19 @@ function animateValue(elementId, value) {
 
 function calculateDeductionsBreakdown(salary) {
     return {
-        socialSecurity: Math.round(salary * DEDUCTIONS.socialSecurity),
-        incomeTax: Math.round(salary * DEDUCTIONS.incomeTax),
-        otherDeductions: Math.round(salary * DEDUCTIONS.otherDeductions)
+        health: Math.round(salary * currentDeductions.health),
+        pension: Math.round(salary * currentDeductions.pension),
+        labor: Math.round(salary * currentDeductions.labor),
+        compensation: Math.round(salary * currentDeductions.compensation),
+        sena: Math.round(salary * currentDeductions.sena),
+        icbf: Math.round(salary * currentDeductions.icbf)
     };
 }
 
 function calculateDeductionsAmount(salary) {
     const breakdown = calculateDeductionsBreakdown(salary);
-    return breakdown.socialSecurity + breakdown.incomeTax + breakdown.otherDeductions;
+    return breakdown.health + breakdown.pension + breakdown.labor + 
+           breakdown.compensation + breakdown.sena + breakdown.icbf;
 }
 
 function formatCurrency(amount) {
@@ -780,6 +884,65 @@ function formatCurrency(amount) {
         maximumFractionDigits: 0
     }).format(amount);
 }
+
+// ==================== GESTIÓN DE DESCUENTOS PERSONALIZADOS ====================
+
+function updateCustomDeductions() {
+    // Obtener valores de los inputs
+    currentDeductions.health = parseFloat(document.getElementById('deductionHealth').value || '0') / 100;
+    currentDeductions.pension = parseFloat(document.getElementById('deductionPension').value || '0') / 100;
+    currentDeductions.labor = parseFloat(document.getElementById('deductionLabor').value || '0') / 100;
+    currentDeductions.compensation = parseFloat(document.getElementById('deductionCompensation').value || '0') / 100;
+    currentDeductions.sena = parseFloat(document.getElementById('deductionSena').value || '0') / 100;
+    currentDeductions.icbf = parseFloat(document.getElementById('deductionICBF').value || '0') / 100;
+
+    // Guardar en localStorage
+    saveDeductionsToStorage();
+
+    // Recalcular descuentos si hay empleado seleccionado
+    calculateDeductions();
+
+    // Mostrar notificación
+    showNotification('Descuentos actualizados correctamente', 'success');
+}
+
+function resetDeductions() {
+    Swal.fire({
+        title: '¿Restablecer descuentos?',
+        text: 'Los porcentajes de descuentos volverán a los valores por defecto.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Sí, restablecer',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+            popup: 'swal-popup',
+            confirmButton: 'swal-confirm-btn',
+            cancelButton: 'swal-cancel-btn'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            currentDeductions = JSON.parse(JSON.stringify(DEFAULT_DEDUCTIONS));
+            saveDeductionsToStorage();
+
+            // Actualizar inputs
+            document.getElementById('deductionHealth').value = (currentDeductions.health * 100).toFixed(2);
+            document.getElementById('deductionPension').value = (currentDeductions.pension * 100).toFixed(2);
+            document.getElementById('deductionLabor').value = (currentDeductions.labor * 100).toFixed(3);
+            document.getElementById('deductionCompensation').value = (currentDeductions.compensation * 100).toFixed(2);
+            document.getElementById('deductionSena').value = (currentDeductions.sena * 100).toFixed(2);
+            document.getElementById('deductionICBF').value = (currentDeductions.icbf * 100).toFixed(2);
+
+            // Recalcular descuentos
+            calculateDeductions();
+
+            // Mostrar notificación
+            showNotification('Descuentos restablecidos a valores por defecto', 'success');
+        }
+    });
+}
+
 
 // ==================== NAVEGACIÓN ====================
 
